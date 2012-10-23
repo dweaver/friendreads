@@ -17,6 +17,8 @@ from pprint import pprint
 
 import requests
 
+import goodreads
+
 
 # import and define tornado-y things
 from tornado.options import define, options
@@ -28,6 +30,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/?", FriendsHandler),
             (r"/login", LoginHandler),
+            (r"/callback", CallbackHandler),
         ]
         settings = dict(
             template_path =
@@ -35,26 +38,42 @@ class Application(tornado.web.Application):
             static_path =
                 os.path.join(os.path.dirname(__file__), "templates/static"),
             debug=True,
-        )
-        tornado.web.Application.__init__(self, handlers, **settings)
+            cookie_secret = "YOUR_SECRET_HERE",
+            )
+        tornado.web.Application.__init__(self, 
+                                        handlers, 
+                                        **settings)
 
 
 class FriendsHandler(tornado.web.RequestHandler):
     def get(self):
-        books = [{'name': 'The Great Gatsby', 
-            'stars': 4.0,
-            'num_reviews': 10}, 
-            {'name': 'The Visual Display of Quantitative Information',
-                'stars': 4.3,
-                'num_reviews': 2},
-            {'name': 'Women',
-                'stars': 3.9,
-                'num_reviews': 2}]
-        self.render("home.html", books=books)
+        gr = goodreads.GoodReads()
+        token = self.get_secure_cookie('goodreads')
+        if token:
+            books = [{'name': 'The Great Gatsby', 
+                'stars': 4.0,
+                'num_reviews': 10}, 
+                {'name': 'The Visual Display of Quantitative Information',
+                    'stars': 4.3,
+                    'num_reviews': 2},
+                {'name': 'Women',
+                    'stars': 3.9,
+                    'num_reviews': 2}]
+            self.render("home.html", books=books)
+        else:
+            self.write(
+                    '<a href="{0}">Login on GoodReads</a>'.format(
+                        gr.get_authurl('http://friendreads.herokuapp.com')))
+
+        
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("login.html")
+
+class CallbackHandler(tornado.web.RequestHandler):
+    def get(self, oauth_token):
+        self.set_secure_cookie('goodreads', oauth_token)
 
 def main():
     tornado.options.parse_command_line()
