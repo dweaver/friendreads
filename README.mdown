@@ -1,0 +1,14 @@
+FriendReads Prototype
+
+Overview:
+This is a rough prototype of a website for visualizing what books are trending among a GoodReads user's friends.
+
+Website: 
+http://?.herokuapp.com
+
+Source: 
+http://github...
+
+
+Known issues:
+
