@@ -1,31 +1,25 @@
-from os import path
+from pprint import pprint
+import os
 import json
 import urllib
 
 import requests
-CONFIG_DIR='../config/'
+CONFIG_DIR='.'
 
 class GoodReads():
     baseurl = 'http://www.goodreads.com'
 
     def __init__(self, oauth_token=None):
-        with open(path.join(CONFIG_DIR, 'goodreads.json')) as f:
-            self.oauth_token = oauth_token
-            # self.config is a dict containing goodreads account 
-            # 'key' and 'secret'
-            self.config = json.loads(f.read())
-
-    def get_key(self):
-        return self.config['key']
-
-    def get_secret(self):
-        return self.config['secret']
+        pprint(os.environ)
+        self.key = os.environ['GOODREADS_KEY']
+        self.secret = os.environ['GOODREADS_SECRET']
+        self.oauth_token = oauth_token
 
     def get_authurl(self, callback_url):
         return '{0}/oauth/authorize?key={1}'.format(
                 self.baseurl, 
                 urllib.quote_plus(callback_url),
-                self.get_key())
+                self.key)
 
     def get_friends(self): 
         pass 

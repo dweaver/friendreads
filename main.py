@@ -48,7 +48,7 @@ class Application(tornado.web.Application):
 class FriendsHandler(tornado.web.RequestHandler):
     def get(self):
         gr = goodreads.GoodReads()
-        token = self.get_secure_cookie('goodreads')
+        token = self.get_secure_cookie('goodreads_token')
         if token:
             books = [{'name': 'The Great Gatsby', 
                 'stars': 4.0,
@@ -73,7 +73,7 @@ class LoginHandler(tornado.web.RequestHandler):
 
 class CallbackHandler(tornado.web.RequestHandler):
     def get(self, oauth_token):
-        self.set_secure_cookie('goodreads', oauth_token)
+        self.set_secure_cookie('goodreads_token', oauth_token)
 
 def main():
     tornado.options.parse_command_line()
