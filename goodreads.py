@@ -16,7 +16,7 @@ class GoodReads():
         self.oauth_token = oauth_token
 
     def get_authurl(self, callback_url):
-        return '{0}/oauth/authorize?key={1}'.format(
+        return '{0}/oauth/authorize?oauth_callback={1}&key={2}'.format(
                 self.baseurl, 
                 urllib.quote_plus(callback_url),
                 self.key)
