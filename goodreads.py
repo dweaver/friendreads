@@ -110,7 +110,7 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
             # usual pattern: http://search.twitter.com/search.json
             url = path
         else:
-            url = "http://www.goodreads.com/api" + path + ".json"
+            url = "http://www.goodreads.com/api" + path 
         # Add the OAuth resource request signature if we have credentials
         if access_token:
             all_args = {}
@@ -125,8 +125,9 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
         callback = self.async_callback(self._on_goodreads_request, callback)
         http = httpclient.AsyncHTTPClient()
         if post_args is not None:
+            headers = {'content-type': 'application/x-www-form-urlencoded'}
             http.fetch(url, method="POST", body=urllib.urlencode(post_args),
-                       callback=callback)
+                       callback=callback, headers=headers)
         else:
             http.fetch(url, callback=callback)
 
@@ -146,12 +147,14 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
             secret=self.settings["goodreads_consumer_secret"])
 
     def _oauth_get_user(self, access_token, callback):
+        print("access_token: {0} in _oauth_get_user".format(access_token))
         callback = self.async_callback(self._parse_user_response, callback)
         self.goodreads_request(
                 "http://www.goodreads.com/api/auth_user",
             access_token=access_token, callback=callback)
 
     def _parse_user_response(self, callback, user):
+        """Parse response for user information"""
         if user:
             """<?xml version="1.0" encoding="UTF-8"?>
                 <GoodreadsResponse>
@@ -173,7 +176,8 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
                 return xd.getElementsByTagName(name)[0].attributes[attr].value
             user = {}
             user['name'] = get_val('name')
-            user['access_token'] = get_val('key')
+            #user['access_token'] = get_val('key')
+            #print("access_token in _parse_user_response: " + user['access_token'])
             user['id'] = get_attr('user', 'id')
 
         callback(user)
