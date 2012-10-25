@@ -17,6 +17,7 @@
 			<h1>FriendReads</h1>
 		</header>
 		<section id="main">
+        token {{ token }}
 {% for book in books %}
 <div>
     <span>{{ book['name'] }} - {{ book['stars'] }} stars by {{ book['num_reviews'] }} friends.</span>
