@@ -110,7 +110,7 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
             # usual pattern: http://search.twitter.com/search.json
             url = path
         else:
-            url = "http://www.goodreads.com/api" + path 
+            url = "http://www.goodreads.com" + path 
         # Add the OAuth resource request signature if we have credentials
         if access_token:
             all_args = {}
@@ -124,6 +124,7 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
             url += "?" + urllib.urlencode(args)
         callback = self.async_callback(self._on_goodreads_request, callback)
         http = httpclient.AsyncHTTPClient()
+        print ("URL: " + url)
         if post_args is not None:
             headers = {'content-type': 'application/x-www-form-urlencoded'}
             http.fetch(url, method="POST", body=urllib.urlencode(post_args),
@@ -176,8 +177,6 @@ class GoodreadsMixin(tornado.auth.OAuthMixin):
                 return xd.getElementsByTagName(name)[0].attributes[attr].value
             user = {}
             user['name'] = get_val('name')
-            #user['access_token'] = get_val('key')
-            #print("access_token in _parse_user_response: " + user['access_token'])
             user['id'] = get_attr('user', 'id')
 
         callback(user)
